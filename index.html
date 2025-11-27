@@ -70,18 +70,34 @@
             const [isModalOpen, setIsModalOpen] = useState(false);
             const [modalType, setModalType] = useState('product'); // 'product' or 'sale'
             
-            // Mock Initial Data
-            const [inventory, setInventory] = useState([
-                { id: 1, name: "English Willow Bat (Grade A)", category: "Bats", price: 350, stock: 12, sku: "BAT-EW-001" },
-                { id: 2, name: "Leather Match Ball (Red)", category: "Balls", price: 25, stock: 150, sku: "BAL-RD-005" },
-                { id: 3, name: "Pro Keeper Gloves", category: "Protection", price: 55, stock: 8, sku: "GLV-KP-022" },
-                { id: 4, name: "Batting Pads (Lightweight)", category: "Protection", price: 80, stock: 20, sku: "PAD-BT-101" },
-            ]);
+            // Initialize Inventory from LocalStorage or use default
+            const [inventory, setInventory] = useState(() => {
+                const savedInventory = localStorage.getItem('crickstore_inventory');
+                return savedInventory ? JSON.parse(savedInventory) : [
+                    { id: 1, name: "English Willow Bat (Grade A)", category: "Bats", price: 350, stock: 12, sku: "BAT-EW-001" },
+                    { id: 2, name: "Leather Match Ball (Red)", category: "Balls", price: 25, stock: 150, sku: "BAL-RD-005" },
+                    { id: 3, name: "Pro Keeper Gloves", category: "Protection", price: 55, stock: 8, sku: "GLV-KP-022" },
+                    { id: 4, name: "Batting Pads (Lightweight)", category: "Protection", price: 80, stock: 20, sku: "PAD-BT-101" },
+                ];
+            });
 
-            const [sales, setSales] = useState([
-                { id: 101, customer: "Rahul D.", product: "English Willow Bat (Grade A)", quantity: 1, total: 350, paymentStatus: "Paid", shippingStatus: "Shipped", date: "2023-10-25" },
-                { id: 102, customer: "Local Club XI", product: "Leather Match Ball (Red)", quantity: 12, total: 300, paymentStatus: "Pending", shippingStatus: "Ready", date: "2023-10-26" },
-            ]);
+            // Initialize Sales from LocalStorage or use default
+            const [sales, setSales] = useState(() => {
+                const savedSales = localStorage.getItem('crickstore_sales');
+                return savedSales ? JSON.parse(savedSales) : [
+                    { id: 101, customer: "Rahul D.", product: "English Willow Bat (Grade A)", quantity: 1, total: 350, paymentStatus: "Paid", shippingStatus: "Shipped", date: "2023-10-25" },
+                    { id: 102, customer: "Local Club XI", product: "Leather Match Ball (Red)", quantity: 12, total: 300, paymentStatus: "Pending", shippingStatus: "Ready", date: "2023-10-26" },
+                ];
+            });
+
+            // --- Persistence Effects ---
+            useEffect(() => {
+                localStorage.setItem('crickstore_inventory', JSON.stringify(inventory));
+            }, [inventory]);
+
+            useEffect(() => {
+                localStorage.setItem('crickstore_sales', JSON.stringify(sales));
+            }, [sales]);
 
             // Form States
             const [newItem, setNewItem] = useState({ name: '', category: 'Bats', price: '', stock: '', sku: '' });
